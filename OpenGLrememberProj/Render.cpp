@@ -11,6 +11,8 @@
 #include "Light.h"
 #include "Primitives.h"
 #include <math.h>
+#include <time.h>
+
 
 int GORY = 0;
 bool boommax = false;
@@ -45,7 +47,112 @@ bool flag_Bomb_Down = false;
 double ugolP = 0;
 double masbezieX[16];
 double masbezieY[16];
+double masgameX[10];
+double masgameY[10];
 bool popolnenie = true;
+bool popolnenie1 = true;
+bool otrisovka = false;
+int colpol = 0;
+
+
+class scene {
+public:
+	scene()
+	{
+		double j = 0;
+		for (int i = 0; i < 100; i++, j = sin(i*acos(-1) / 180))
+		{
+			srand(time(0)*j * 10000 + j * 10000 + rand() % 10000);
+			PointsGrassMass[i][0] = rand() % 400 - 200;
+			PointsGrassMass[i][1] = rand() % 400 - 200;
+		}
+	}
+	void buildScene()
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			if (est_popodanie)
+			{
+				double x = PointsGrassMass[i][0];
+				double y = PointsGrassMass[i][1];
+				PointsGrassMass[i][2] = 85;
+				PointsGrassMass[i][3] = acos(x / (pow(x*x + y*y, 0.5)));
+			}
+			glPushMatrix();
+			glTranslated(PointsGrassMass[i][0], PointsGrassMass[i][1], 0);
+			glRotated(PointsGrassMass[i][2], 1, 0, 0);
+			glRotated(PointsGrassMass[i][3], 0, 0, 1);
+			derevo(PointsGrassMass[i][3]);
+			glPopMatrix();
+		}
+	}
+private:
+	double PointsGrassMass[100][5] = { 0 };
+	void derevo(double ugol)
+	{
+		double Po1[] = {0,0,0};
+		double Po2[] = {-1,1,0};
+		double Po3[] = {0,0,6};
+		double Po4[] = {-1,-1,0};
+		double Po5[] = {0,0,4};
+		double Po6[] = {0,0,4.5};
+		double Po7[] = {1.5,-1,5.5};
+		double Po8[] = {-0.5,0.5,1};
+		double Po9[] = {-0.5,0.5,1.5};
+		double Po10[] = {0.5,1.5,2.5};
+		double Po11[] = {0,-2,4};
+		double Po12[] = {-0.5,-0.5,1.5};
+		double Po13[] = { -0.5,-0.5,2.5 };
+		double *tochk[] = { Po1,Po2 ,Po3 ,Po4 ,Po5 ,Po6 ,Po7 ,Po8 ,Po9 ,Po10 ,Po11 ,Po12 ,Po13 };
+
+		for (int i = 0; i < 13; i++)
+		{
+			double Cen[] = { 0,0,0 };
+			tochk[i][0] = (tochk[i][0] - Cen[0])*cos(ugol) - (tochk[i][2] - Cen[2])*sin(ugol) + Cen[0];
+			tochk[i][1] = (tochk[i][0] - Cen[0])*sin(ugol) + (tochk[i][1] - Cen[1])*cos(ugol) + Cen[1];
+		}
+
+		glBegin(GL_TRIANGLES);
+		glColor3d(1, 0, 0);
+		glVertex3dv(Po1);
+		glVertex3dv(Po2);
+		glVertex3dv(Po3);
+
+		glVertex3dv(Po1);
+		glVertex3dv(Po4);
+		glVertex3dv(Po3);
+		//-----
+		glVertex3dv(Po5);
+		glVertex3dv(Po6);
+		glVertex3dv(Po7);
+		//------
+		glVertex3dv(Po8);
+		glVertex3dv(Po9);
+		glVertex3dv(Po10);
+
+		glVertex3dv(Po11);
+		glVertex3dv(Po12);
+		glVertex3dv(Po13);
+		glEnd();
+	}
+};
+
+scene derev;
+
+
+GLfloat amb1[] = { 0.2, 0.2, 0.1, 1. };
+GLfloat dif1[] = { 0.65, 0.76, 0.77, 1. };
+GLfloat spec1[] = { 0.65, 0.76, 0.77, 1. };
+GLfloat sh1 = 0.1f * 256;
+GLfloat amb2[] = { 0, 0, 0, 1. };
+GLfloat dif2[] = { 0, 0, 0, 1. };
+GLfloat spec2[] = { 0, 0, 0, 1. };
+GLfloat sh2 = 0.1f * 256;
+GLfloat amb[] = { 0.2, 0.2, 0.1, 1. };
+GLfloat dif[] = { 0.97, 0.93, 0.86, 1. };
+GLfloat spec[] = { 0.97, 0.93, 0.86, 1. };
+GLfloat sh = 0.1f * 256;
+
 
 GLuint texId[6];
 
@@ -78,7 +185,7 @@ public:
 		/*pos.setCoords(camDist*cos(fi2)*cos(fi1),
 		camDist*cos(fi2)*sin(fi1),
 		camDist*sin(fi2));*/
-		if (!flag_Bomb_Down)
+		if (!flag_Bomb_Down && !otrisovka)
 		{
 			camDist = 5;
 			pos.setCoords(XV + camDist*cos(fi2)*cos(fi1),
@@ -86,7 +193,7 @@ public:
 				(10.5*razmer) + camDist*sin(fi2));
 		}
 		else
-			if (!est_popodanie && razmer<1)
+			if (!est_popodanie && razmer<1 && !otrisovka)
 			{
 				lookPoint.setCoords(XV, YV, 0);
 				camDist = 1;
@@ -95,7 +202,7 @@ public:
 					PointEnd[2] + camDist*sin(fi2));
 			}
 			else
-				if (!boommax || razmer<1)
+				if (!boommax || razmer<1 && !otrisovka)
 				{
 					if (camDist<63)
 						camDist += 1;
@@ -148,7 +255,7 @@ public:
 	//рисует сферу и линии под источником света, вызывается движком
 	void  DrawLightGhismo()
 	{
-		glDisable(GL_LIGHTING);
+		//glDisable(GL_LIGHTING);
 
 
 		//glColor3d(0.9, 0.8, 0);
@@ -269,6 +376,11 @@ void keyDownEvent(OpenGL *ogl, int key)
 	if (key == 'L')
 	{
 		lightMode = !lightMode;
+	}
+
+	if (key == 'P' && razmer >= 1)
+	{
+		otrisovka = true;
 	}
 
 	if (key == ' ')
@@ -402,6 +514,9 @@ void keyUpEvent(OpenGL *ogl, int key)
 		YV = 0;
 		ugolP = 0;
 		popolnenie = true;
+		popolnenie1 = true;
+		otrisovka = false;
+		colpol = 0;
 	}
 
 }
@@ -758,10 +873,15 @@ void cilindrBOOM(double X, double Y, double Z, bool osnovaC, double R)
 		glEnd();
 		osnova = false;
 	}
-	else //----------------------------изменить на предложение игоря
+	else
 	{
 		glBegin(GL_TRIANGLE_FAN);
 		glColor3d(1, 0, 1);
+		double xxx[] = { x , y ,0 };
+		double yyy[] = { r*cos(M_PI / 180), r*sin(M_PI / 180),0 };
+		double zzz[] = { r*cos(2 * M_PI / 180), r*sin(2 * M_PI / 180),0 };
+		normal(xxx, yyy, zzz, Vector);
+		glNormal3dv(Vector);
 		glVertex3d(x, y, 0);
 		for (int i = 0; i <= 360; i++) {
 			x1 = r*cos(i*M_PI / 180);
@@ -773,20 +893,34 @@ void cilindrBOOM(double X, double Y, double Z, bool osnovaC, double R)
 		glBegin(GL_QUAD_STRIP);
 		glColor3d(0, 1, 1);
 		for (int i = 0; i <= 360; i++) {
+			double Point1[] = { r*cos(i*M_PI / 180), r*sin(i*M_PI / 180),0 };
+			double Point2[] = { r*cos(i*M_PI / 180), r*sin(i*M_PI / 180),1 * Rgrib };
+			double Point3[] = { r*cos((i + 1)* M_PI / 180), r*sin((i + 1)* M_PI / 180),1 * Rgrib };
 			x1 = r*cos(i*M_PI / 180);
 			y1 = r*sin(i*M_PI / 180);
+			normal(Point3, Point2, Point1, Vector);
+			glNormal3dv(Vector);
+			glTexCoord2d((475.0 + 594.0*i / 360.0) / 2048.0, 1 - 944.0 / 2048.0);
 			glVertex3d(x1, y1, 0);
+			glTexCoord2d((475.0 + 594.0*i / 360.0) / 2048.0, 1 - 867.0 / 2048.0);
 			glVertex3d(x1, y1, 1 * Rgrib);
 		}
 		glEnd();
 
+		xxx[2] = 1 * Rgrib;
+		yyy[2] = 1 * Rgrib;
+		zzz[2] = 1 * Rgrib;
 		glBegin(GL_TRIANGLE_FAN);
 		glColor3d(1, 0, 1);
-
+		normal(zzz, yyy, xxx, Vector);
+		glNormal3dv(Vector);
+		glTexCoord2d(768.0 / 2048.0, 1 - 764.0 / 2048.0);
 		glVertex3d(x, y, 1 * Rgrib);
-		for (int i = 0; i <= 360; i++) {
+		for (int i = 0; i <= 360; i++) 
+		{
 			x = r*cos(i*M_PI / 180);
 			y = r*sin(i*M_PI / 180);
+			glTexCoord2d((768.0 - 30.0*sin(i*M_PI / 180)) / 2048.0, 1 - (764.0 - 30.0 * cos(i*M_PI / 180)) / 2048.0);
 			glVertex3d(x, y, 1 * Rgrib);
 		}
 		glEnd();
@@ -1188,19 +1322,14 @@ void bomb()
 //пока есть
 void somolet()
 {
-	GLfloat amb[] = { 0.2, 0.2, 0.1, 1. };
-	GLfloat dif[] = { 0.54, 0.58, 0.58, 1. };
-	GLfloat spec[] = { 0.54, 0.58, 0.58, 1. };
-	GLfloat sh = 0.1f * 256;
-
 	//фоновая
-	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb1);
 	//дифузная
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif1);
 	//зеркальная
-	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, spec1);
 	//размер блика
-	glMaterialf(GL_FRONT, GL_SHININESS, sh);
+	glMaterialf(GL_FRONT, GL_SHININESS, sh1);
 	
 	cilindrSomolet(0, 0, 0, osnovaSomolet, 1);
 	cilindrSomolet(0, 0, 0, osnovaSomolet, 2);
@@ -1248,11 +1377,11 @@ void cube()
 	glNormal3dv(Vector);
 	glTexCoord2i(0,0);
 	glVertex3dv(A1C);
-	glTexCoord2d(0,50);
+	glTexCoord2d(0,10);
 	glVertex3dv(B1C);
-	glTexCoord2d(50,50);
+	glTexCoord2d(10,10);
 	glVertex3dv(C1C);
-	glTexCoord2d(50,0);
+	glTexCoord2d(10,0);
 	glVertex3dv(D1C);
 	glEnd();
 
@@ -1374,6 +1503,14 @@ void snegovik()
 	glTranslated(0, 0, 2.5*razmer);
 	sphere(1 * razmer, 50, 50);
 	glTranslated(0, 0, 0);
+	//фоновая
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb2);
+	//дифузная
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif2);
+	//зеркальная
+	glMaterialfv(GL_FRONT, GL_SPECULAR, spec2);
+	//размер блика
+	glMaterialf(GL_FRONT, GL_SHININESS, sh2);
 
 	glTranslated(0.8*razmer, 0.5*razmer, 0.3*razmer);
 	sphere(0.1*razmer, 50, 50);
@@ -1382,6 +1519,15 @@ void snegovik()
 	glTranslated(0.8*razmer, -0.5*razmer, 0);
 	sphere(0.1*razmer, 50, 50);
 	glTranslated(-0.8*razmer, 0.5*razmer, 0);
+
+	//фоновая
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+	//дифузная
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+	//зеркальная
+	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+	//размер блика
+	glMaterialf(GL_FRONT, GL_SHININESS, sh);
 	glBindTexture(GL_TEXTURE_2D, texId[4]);
 	glTranslated(0.7*razmer, 0, -0.2*razmer);
 	glRotated(90, 0, 1, 0);
@@ -1402,7 +1548,12 @@ void bezie_move(double P1[], double P2[], double P3[], double P4[], double Point
 	Point[1] = pow(1 - t, 3)*P1[1] + 3 * t*pow(1 - t, 2)*P2[1] + 3 * t*t*(1 - t)*P3[1] + t*t*t*P4[1];
 	Point[2] = pow(1 - t, 3)*P1[2] + 3 * t*pow(1 - t, 2)*P2[2] + 3 * t*t*(1 - t)*P3[2] + t*t*t*P4[2];
 	if (!est_popodanie)
-		t += 0.01;
+	{
+		if (BEZIE >= 4 && BEZIE <= 7)
+			t += 0.005;
+		else
+			t += 0.01;
+	}
 	else
 		t += 0.2;
 }
@@ -1493,6 +1644,9 @@ void bezpostr(double P0[], double P1[], double P2[], double P3[], double &t)
 
 }
 
+
+
+
 void Render(OpenGL *ogl)
 {
 	glBindTexture(GL_TEXTURE_2D, texId[0]);
@@ -1520,8 +1674,8 @@ void Render(OpenGL *ogl)
 
 	//настройка материала
 	GLfloat amb[] = { 0.2, 0.2, 0.1, 1. };
-	GLfloat dif[] = { 1, 1, 1, 1. };
-	GLfloat spec[] = { 0.9, 0.8, 0.3, 1. };
+	GLfloat dif[] = { 0.97, 0.93, 0.86, 1. };
+	GLfloat spec[] = { 0.97, 0.93, 0.86, 1. };
 	GLfloat sh = 0.1f * 256;
 
 	//фоновая
@@ -1538,9 +1692,9 @@ void Render(OpenGL *ogl)
 	//===================================
 	//Прогать тут  ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	//Координаты текстур
-
 	//-------------------------
 	//моя прога
+
 	if (popolnenie)
 	{
 		for (int i = 0; i < 16; i++)
@@ -1550,6 +1704,17 @@ void Render(OpenGL *ogl)
 		}
 		popolnenie = false;
 	}
+
+	if (popolnenie1)
+	{
+		for (int i = 0; i < 10; i++)
+		{
+			masgameX[i] = -50 + rand() % 100;
+			masgameY[i] = -50 + rand() % 100;
+		}
+		popolnenie1 = false;
+	}
+
 
 	double P11[] = { -5, 25, 200 };//спуск/подъем
 	double P12[] = { -10,20,20 };
@@ -1576,7 +1741,7 @@ void Render(OpenGL *ogl)
 	double P51[] = { masbezieX[3],masbezieY[3],20 };
 	double P52[] = { masbezieX[5],masbezieY[5],20 };
 	double P53[] = { masbezieX[6],masbezieY[6],20 };
-	double P54[] = { masbezieX[7],masbezieY[7],200 };
+	double P54[] = { masbezieX[7],masbezieY[7],20 };
 
 	double P61[] = { masbezieX[7],masbezieY[7],20 };
 	double P62[] = { masbezieX[9],masbezieY[9],20 };
@@ -1735,6 +1900,15 @@ void Render(OpenGL *ogl)
 	PointPrev[2] = PointCur[2];
 	rendCount++;
 
+	//фоновая
+	glMaterialfv(GL_FRONT, GL_AMBIENT, amb);
+	//дифузная
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, dif);
+	//зеркальная
+	glMaterialfv(GL_FRONT, GL_SPECULAR, spec);
+	//размер блика
+	glMaterialf(GL_FRONT, GL_SHININESS, sh);
+
 	if (!flag_Bomb_Down)
 	{
 		xb = PointCur[0];
@@ -1753,7 +1927,7 @@ void Render(OpenGL *ogl)
 		}
 		else
 		{
-			if (razmer<1)
+			if (razmer<1 && !otrisovka)
 				est_popodanie = true;
 		}
 	}
@@ -1779,7 +1953,7 @@ void Render(OpenGL *ogl)
 			}
 			if (razmer < 1)
 				razmer += 0.02;
-			else
+			else if(razmer >= 1)
 				est_popodanie = false;
 		}
 	}
@@ -1791,6 +1965,52 @@ void Render(OpenGL *ogl)
 		glRotated(-ugolP, 0, 0, 1);
 		glTranslated(-XV, -YV, 0);
 	}
+
+	if (otrisovka)
+	{
+		if (colpol < 10)
+		{
+			glBegin(GL_TRIANGLE_FAN);
+			glColor3d(0, 1, 0);
+			//glTexCoord2d(250.0 / 1024.0, 1 - 250 / 1024.0);
+			glVertex3d(masgameX[colpol], masgameY[colpol], 0.01);
+			for (int i = 0; i <= 360; i++)
+			{
+				//glTexCoord2d((250.0 - 250.0 * sin(i*M_PI / 180)) / 1024.0, 1 - (250.0 + 250.0 * cos(i*pi / 180)) / 1024.0);
+				glVertex3d(masgameX[colpol] + 2 * sin(i*M_PI / 180), masgameY[colpol] + 2 * cos(i*M_PI / 180), 0.01);
+			}
+			glEnd();
+			for (int i = 0; i <= 360; i++)
+			{
+				if (XV > masgameX[colpol] - 2 * sin(i*M_PI / 180) && XV < masgameX[colpol] + 2 * sin(i*M_PI / 180) && YV>masgameY[colpol] - 2 * cos(i*M_PI / 180) && YV < masgameY[colpol] + 2 * cos(i*M_PI / 180))
+				{
+					colpol++;
+					razmer -= 0.1;
+				}
+			}
+		}
+		else
+		{
+			otrisovka = false;
+			BEZIE = 1;
+			flag_Bomb_Down = false;
+			est_popodanie = false;
+			razmer = 0.1;
+			t = 0;
+			t1 = 0;
+			Rgrib = 0.1;
+			boommax = false;
+			popolnenie = true;
+			popolnenie1 = true;
+			colpol = 0;
+
+		}
+	}
+
+	derev.buildScene();
+
+
+
 
 	//конец моей проги
 

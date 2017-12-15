@@ -113,8 +113,8 @@ void OpenGL::render()
 	}
 
 	//отключаем проверку Zбуфера для прорисовки "лампочки" сквозь объекты
-	glDisable(GL_DEPTH_TEST);
-	mainLight->DrawLightGhismo();
+	//glDisable(GL_DEPTH_TEST);
+	//mainLight->DrawLightGhismo();
 
 	//drawPlane();
 	SwapBuffers(g_hDC);
