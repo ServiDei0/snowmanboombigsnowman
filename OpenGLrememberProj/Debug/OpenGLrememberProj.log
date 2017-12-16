@@ -1,15 +1,15 @@
 ﻿  Render.cpp
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(143): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(144): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(145): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(151): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(152): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(153): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(294): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1676): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1677): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1678): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1769): warning C4101: angleXY: неиспользованная локальная переменная
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1771): warning C4101: angleYZ: неиспользованная локальная переменная
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1770): warning C4101: angleXZ: неиспользованная локальная переменная
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(182): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(183): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(184): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(190): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(191): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(192): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(333): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1749): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1750): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1751): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1842): warning C4101: angleXY: неиспользованная локальная переменная
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1844): warning C4101: angleYZ: неиспользованная локальная переменная
+s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1843): warning C4101: angleXZ: неиспользованная локальная переменная
   OpenGLrememberProj.vcxproj -> S:\GitHub\snowmanboombigsnowman\Debug\OpenGLrememberProj.exe

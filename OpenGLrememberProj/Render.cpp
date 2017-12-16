@@ -54,6 +54,7 @@ bool popolnenie1 = true;
 bool otrisovka = false;
 int colpol = 0;
 
+GLuint texId[7];
 
 class scene {
 public:
@@ -71,37 +72,60 @@ public:
 	{
 		for (int i = 0; i < 100; i++)
 		{
+			double RGB[3];
 			if (est_popodanie)
 			{
 				double x = PointsGrassMass[i][0];
 				double y = PointsGrassMass[i][1];
-				PointsGrassMass[i][2] = 85;
-				PointsGrassMass[i][3] = acos(x / (pow(x*x + y*y, 0.5)));
+				PointsGrassMass[i][2] = 80;
+				PointsGrassMass[i][3] = asin(x / (pow(x*x + y*y, 0.5)));
+				flagExplosion = true;
 			}
+			if (flagExplosion)
+			{
+				RGB[0] = 0;
+				RGB[1] = 0;
+				RGB[2] = 0;
+			}
+			else
+			{
+				RGB[0] = 1;
+				RGB[1] = 0;
+				RGB[2] = 0;
+			}
+
 			glPushMatrix();
 			glTranslated(PointsGrassMass[i][0], PointsGrassMass[i][1], 0);
 			glRotated(PointsGrassMass[i][2], 1, 0, 0);
-			glRotated(PointsGrassMass[i][3], 0, 0, 1);
-			derevo(PointsGrassMass[i][3]);
+			derevo(PointsGrassMass[i][3], RGB);
 			glPopMatrix();
 		}
 	}
-private:
-	double PointsGrassMass[100][5] = { 0 };
-	void derevo(double ugol)
+	void reset()
 	{
-		double Po1[] = {0,0,0};
-		double Po2[] = {-1,1,0};
-		double Po3[] = {0,0,6};
-		double Po4[] = {-1,-1,0};
-		double Po5[] = {0,0,4};
-		double Po6[] = {0,0,4.5};
-		double Po7[] = {1.5,-1,5.5};
-		double Po8[] = {-0.5,0.5,1};
-		double Po9[] = {-0.5,0.5,1.5};
-		double Po10[] = {0.5,1.5,2.5};
-		double Po11[] = {0,-2,4};
-		double Po12[] = {-0.5,-0.5,1.5};
+		for (int i = 0; i < 100; i++)
+		{
+			PointsGrassMass[i][2] = 0;
+			PointsGrassMass[i][3] = 0;
+		}
+	}
+private:
+	double flagExplosion = false;
+	double PointsGrassMass[100][5] = { 0 };
+	void derevo(double ugol, double RGB[])
+	{
+		double Po1[] = { 0,0,0 };
+		double Po2[] = { -1,1,0 };
+		double Po3[] = { 0,0,6 };
+		double Po4[] = { -1,-1,0 };
+		double Po5[] = { 0,0,4 };
+		double Po6[] = { 0,0,4.5 };
+		double Po7[] = { 1.5,-1,5.5 };
+		double Po8[] = { -0.5,0.5,1 };
+		double Po9[] = { -0.5,0.5,1.5 };
+		double Po10[] = { 0.5,1.5,2.5 };
+		double Po11[] = { 0,-2,4 };
+		double Po12[] = { -0.5,-0.5,1.5 };
 		double Po13[] = { -0.5,-0.5,2.5 };
 		double *tochk[] = { Po1,Po2 ,Po3 ,Po4 ,Po5 ,Po6 ,Po7 ,Po8 ,Po9 ,Po10 ,Po11 ,Po12 ,Po13 };
 
@@ -113,25 +137,40 @@ private:
 		}
 
 		glBegin(GL_TRIANGLES);
-		glColor3d(1, 0, 0);
+		glColor3d(RGB[0], RGB[1], RGB[2]);
+		glTexCoord2d(0.5, 1);
 		glVertex3dv(Po1);
+		glTexCoord2d(1, 0);
 		glVertex3dv(Po2);
+		glTexCoord2d(0, 0);
 		glVertex3dv(Po3);
 
+		glTexCoord2d(0.5, 1);
 		glVertex3dv(Po1);
+		glTexCoord2d(1, 0);
 		glVertex3dv(Po4);
+		glTexCoord2d(0, 0);
 		glVertex3dv(Po3);
 		//-----
+		glTexCoord2d(0.5, 1);
 		glVertex3dv(Po5);
+		glTexCoord2d(1, 0);
 		glVertex3dv(Po6);
+		glTexCoord2d(0, 0);
 		glVertex3dv(Po7);
 		//------
+		glTexCoord2d(0.5, 1);
 		glVertex3dv(Po8);
+		glTexCoord2d(1, 0);
 		glVertex3dv(Po9);
+		glTexCoord2d(0, 0);
 		glVertex3dv(Po10);
 
+		glTexCoord2d(0.5, 1);
 		glVertex3dv(Po11);
+		glTexCoord2d(1, 0);
 		glVertex3dv(Po12);
+		glTexCoord2d(0, 0);
 		glVertex3dv(Po13);
 		glEnd();
 	}
@@ -154,7 +193,7 @@ GLfloat spec[] = { 0.97, 0.93, 0.86, 1. };
 GLfloat sh = 0.1f * 256;
 
 
-GLuint texId[6];
+
 
 //класс дл€ настройки камеры
 class CustomCamera : public Camera
@@ -517,6 +556,7 @@ void keyUpEvent(OpenGL *ogl, int key)
 		popolnenie1 = true;
 		otrisovka = false;
 		colpol = 0;
+		derev.reset();
 	}
 
 }
@@ -568,7 +608,7 @@ void initRender(OpenGL *ogl)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	//---------------------------------------------------------------
-	
+
 	char *texCharArray1; //€
 
 	OpenGL::LoadBMP("boom.bmp", &texW, &texH, &texarray1); //€
@@ -669,7 +709,23 @@ void initRender(OpenGL *ogl)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 
+	RGBTRIPLE *texarray6; //€
+	char *texCharArray6; //€
 
+	OpenGL::LoadBMP("tree.bmp", &texW, &texH, &texarray6); //€
+	OpenGL::RGBtoChar(texarray6, texW, texH, &texCharArray6); //€
+
+	glBindTexture(GL_TEXTURE_2D, texId[6]); //€
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texW, texH, 0, GL_RGBA, GL_UNSIGNED_BYTE, texCharArray6); //€
+
+	free(texCharArray6); //€
+	free(texarray6); //€
+					 //наводим шмон
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	//камеру и свет прив€зываем к "движку"
 	ogl->mainCamera = &camera;
@@ -757,7 +813,7 @@ void tor(GLfloat r, GLfloat R, GLint nsides, GLint rings)
 			n3[1] = -sin(theta) * (cos(phi1));
 			n3[2] = sin(phi1);
 
-			if (GORY==0) 
+			if (GORY == 0)
 			{
 				glBindTexture(GL_TEXTURE_2D, texId[1]);
 				glBegin(GL_QUADS);
@@ -785,10 +841,10 @@ void tor(GLfloat r, GLfloat R, GLint nsides, GLint rings)
 				glTexCoord2d((1023.0 + i*995.0 / rings) / 2048.0, 1 - (463.0 + (j + 1)*284.0 / nsides) / 2048.0);
 				glVertex3fv(p3);
 				glNormal3fv(n2);
-				glTexCoord2d((1023.0 + (i+1)*995.0 / rings) / 2048.0, 1 - (463.0 + (j + 1)*284.0 / nsides) / 2048.0);
+				glTexCoord2d((1023.0 + (i + 1)*995.0 / rings) / 2048.0, 1 - (463.0 + (j + 1)*284.0 / nsides) / 2048.0);
 				glVertex3fv(p2);
 				glNormal3fv(n1);
-				glTexCoord2d((1023.0 + (i+1)*995.0 / rings) / 2048.0, 1 - (463.0 + j*284.0 / nsides) / 2048.0);
+				glTexCoord2d((1023.0 + (i + 1)*995.0 / rings) / 2048.0, 1 - (463.0 + j*284.0 / nsides) / 2048.0);
 				glVertex3fv(p1);
 				glNormal3fv(n0);
 				glTexCoord2d((1023.0 + i*995.0 / rings) / 2048.0, 1 - (463.0 + j*284.0 / nsides) / 2048.0);
@@ -814,7 +870,7 @@ void tor(GLfloat r, GLfloat R, GLint nsides, GLint rings)
 	}
 }
 //-----------------------------------------------------------------
-//перерасчитать верхнее основание цилиндра у взрыва
+
 void cilindrBOOM(double X, double Y, double Z, bool osnovaC, double R)
 {
 	double r = R;
@@ -863,7 +919,7 @@ void cilindrBOOM(double X, double Y, double Z, bool osnovaC, double R)
 		glColor3d(1, 0, 1);
 		glTexCoord2d(588.0 / 2048.0, 1 - 1303.0 / 2048.0);
 		glVertex3d(x, y, 18 * Rgrib);
-		for (int i = 0; i <= 360; i++) 
+		for (int i = 0; i <= 360; i++)
 		{
 			x = r*cos(i*M_PI / 180);
 			y = r*sin(i*M_PI / 180);
@@ -916,7 +972,7 @@ void cilindrBOOM(double X, double Y, double Z, bool osnovaC, double R)
 		glNormal3dv(Vector);
 		glTexCoord2d(768.0 / 2048.0, 1 - 764.0 / 2048.0);
 		glVertex3d(x, y, 1 * Rgrib);
-		for (int i = 0; i <= 360; i++) 
+		for (int i = 0; i <= 360; i++)
 		{
 			x = r*cos(i*M_PI / 180);
 			y = r*sin(i*M_PI / 180);
@@ -1045,12 +1101,12 @@ void cilindrSneg(double X, double Y, double Z, double R)
 	double zzz[] = { r*cos(2 * M_PI / 180), r*sin(2 * M_PI / 180),0 };
 	normal(zzz, yyy, xxx, Vector);
 	glNormal3dv(Vector);
-	glTexCoord2d(125.0/256.0, 1-36.0/256.0);
+	glTexCoord2d(125.0 / 256.0, 1 - 36.0 / 256.0);
 	glVertex3d(x, y, 0);
 	for (int i = 0; i <= 360; i++) {
 		x1 = r*1.5*cos(i*M_PI / 180);
 		y1 = r*1.5*sin(i*M_PI / 180);
-		glTexCoord2d((125.0-15.0*sin(i*M_PI / 180))/256, 1-(36.0 - 15.0 * cos(i*M_PI / 180))/256);
+		glTexCoord2d((125.0 - 15.0*sin(i*M_PI / 180)) / 256, 1 - (36.0 - 15.0 * cos(i*M_PI / 180)) / 256);
 		glVertex3d(x1, y1, 0);
 	}
 	glEnd();
@@ -1138,7 +1194,7 @@ void cilindrNos(double X, double Y, double Z, double R)
 		y1 = r*sin(i*M_PI / 180);
 		normal(Point1, Point2, Point3, Vector);
 		glNormal3dv(Vector);
-		glTexCoord2d((20.0+38.0*i/360.0)/256.0 , 1-219.0/256.0);
+		glTexCoord2d((20.0 + 38.0*i / 360.0) / 256.0, 1 - 219.0 / 256.0);
 		glVertex3d(x1, y1, 0);
 		glTexCoord2d((20.0 + 38.0 * i / 360.0) / 256.0, 1 - 173.0 / 256.0);
 		glVertex3d(x, y, 1.5*razmer);
@@ -1172,7 +1228,7 @@ void bomb()
 	glColor3d(1, 1, 1);
 	normal(B, S1, A, Vector);
 	glNormal3dv(Vector);
-	glTexCoord2d(40.0/256.0, 1-20.0/256.0);
+	glTexCoord2d(40.0 / 256.0, 1 - 20.0 / 256.0);
 	glVertex3dv(S1);
 	glTexCoord2d(20.0 / 256.0, 1 - 49.0 / 256.0);
 	glVertex3dv(A);
@@ -1210,7 +1266,7 @@ void bomb()
 	glColor3d(1, 0, 0);
 	normal(F, S2, E, Vector);
 	glNormal3dv(Vector);
-	glTexCoord2d( 105.0/ 256.0, 1 - 89.0 / 256.0);
+	glTexCoord2d(105.0 / 256.0, 1 - 89.0 / 256.0);
 	glVertex3dv(S2);
 	glTexCoord2d(95.0 / 256.0, 1 - 109.0 / 256.0);
 	glVertex3dv(E);
@@ -1330,7 +1386,7 @@ void somolet()
 	glMaterialfv(GL_FRONT, GL_SPECULAR, spec1);
 	//размер блика
 	glMaterialf(GL_FRONT, GL_SHININESS, sh1);
-	
+
 	cilindrSomolet(0, 0, 0, osnovaSomolet, 1);
 	cilindrSomolet(0, 0, 0, osnovaSomolet, 2);
 	glTranslated(0, 0, 2);
@@ -1371,49 +1427,75 @@ void cube()
 	glBegin(GL_POLYGON);//1
 	glColor3f(1, 1, 1);
 	if (!est_popodanie)
-	normal(A1C, B1C, D1C, Vector);
+		normal(A1C, B1C, D1C, Vector);
 	else
-	normal(D1C, B1C, A1C, Vector);
+		normal(D1C, B1C, A1C, Vector);
 	glNormal3dv(Vector);
-	glTexCoord2i(0,0);
+	glTexCoord2i(0, 0);
 	glVertex3dv(A1C);
-	glTexCoord2d(0,10);
+	glTexCoord2d(0, 10);
 	glVertex3dv(B1C);
-	glTexCoord2d(10,10);
+	glTexCoord2d(10, 10);
 	glVertex3dv(C1C);
-	glTexCoord2d(10,0);
+	glTexCoord2d(10, 0);
 	glVertex3dv(D1C);
 	glEnd();
 
 
 	glBegin(GL_POLYGON);//2
-	glColor3f(0.5, 1.0, 0.4);
+	glColor3f(1, 1, 1);
 	normal(BC, B1C, CC, Vector);
 	glNormal3dv(Vector);
+	glTexCoord2i(0, 0);
 	glVertex3dv(BC);
+	glTexCoord2d(0, 5);
 	glVertex3dv(B1C);
+	glTexCoord2d(5, 5);
 	glVertex3dv(C1C);
+	glTexCoord2d(5, 0);
 	glVertex3dv(CC);
 	glEnd();
 
 	glBegin(GL_POLYGON);//3
-	glColor3f(0.5, 1.0, 0.4);
+	glColor3f(1, 1, 1);
 	normal(DC, CC, D1C, Vector);
 	glNormal3dv(Vector);
+	glTexCoord2i(0, 0);
 	glVertex3dv(DC);
+	glTexCoord2d(0, 5);
 	glVertex3dv(CC);
+	glTexCoord2d(5, 5);
 	glVertex3dv(C1C);
+	glTexCoord2d(5, 0);
 	glVertex3dv(D1C);
 	glEnd();
 
 	glBegin(GL_POLYGON);//4
-	glColor3f(0.5, 1.0, 0.4);
+	glColor3f(1, 1, 1);
 	normal(DC, A1C, AC, Vector);
 	glNormal3dv(Vector);
+	glTexCoord2i(0, 0);
 	glVertex3dv(AC);
+	glTexCoord2d(0, 5);
 	glVertex3dv(A1C);
+	glTexCoord2d(5, 5);
 	glVertex3dv(D1C);
+	glTexCoord2d(5, 0);
 	glVertex3dv(DC);
+	glEnd();
+
+	glBegin(GL_POLYGON);//6
+	glColor3f(1, 1, 1);
+	normal(A1C, BC, AC, Vector);
+	glNormal3dv(Vector);
+	glTexCoord2i(0, 0);
+	glVertex3dv(AC);
+	glTexCoord2d(0, 5);
+	glVertex3dv(BC);
+	glTexCoord2d(5, 5);
+	glVertex3dv(B1C);
+	glTexCoord2d(5, 0);
+	glVertex3dv(A1C);
 	glEnd();
 
 	glBindTexture(GL_TEXTURE_2D, texId[5]);
@@ -1431,15 +1513,6 @@ void cube()
 	glVertex3dv(DC);
 	glEnd();
 
-	glBegin(GL_POLYGON);//6
-	glColor3f(0.5, 1.0, 0.4);
-	normal(A1C, BC, AC, Vector);
-	glNormal3dv(Vector);
-	glVertex3dv(AC);
-	glVertex3dv(BC);
-	glVertex3dv(B1C);
-	glVertex3dv(A1C);
-	glEnd();
 }
 
 void sphere(double r, int nx, int ny)
@@ -1953,7 +2026,7 @@ void Render(OpenGL *ogl)
 			}
 			if (razmer < 1)
 				razmer += 0.02;
-			else if(razmer >= 1)
+			else if (razmer >= 1)
 				est_popodanie = false;
 		}
 	}
@@ -1970,13 +2043,14 @@ void Render(OpenGL *ogl)
 	{
 		if (colpol < 10)
 		{
+			glBindTexture(GL_TEXTURE_2D, texId[2]);
 			glBegin(GL_TRIANGLE_FAN);
 			glColor3d(0, 1, 0);
-			//glTexCoord2d(250.0 / 1024.0, 1 - 250 / 1024.0);
+			glTexCoord2d(256.0 / 512.0, 1 - 256.0 / 512.0);
 			glVertex3d(masgameX[colpol], masgameY[colpol], 0.01);
 			for (int i = 0; i <= 360; i++)
 			{
-				//glTexCoord2d((250.0 - 250.0 * sin(i*M_PI / 180)) / 1024.0, 1 - (250.0 + 250.0 * cos(i*pi / 180)) / 1024.0);
+				glTexCoord2d((256.0 - 180.0 * sin(i*M_PI / 180)) / 512.0, 1 - (256.0 + 180.0 * cos(i*M_PI / 180)) / 512.0);
 				glVertex3d(masgameX[colpol] + 2 * sin(i*M_PI / 180), masgameY[colpol] + 2 * cos(i*M_PI / 180), 0.01);
 			}
 			glEnd();
@@ -2003,10 +2077,10 @@ void Render(OpenGL *ogl)
 			popolnenie = true;
 			popolnenie1 = true;
 			colpol = 0;
-
+			derev.reset();
 		}
 	}
-
+	glBindTexture(GL_TEXTURE_2D, texId[6]);
 	derev.buildScene();
 
 
