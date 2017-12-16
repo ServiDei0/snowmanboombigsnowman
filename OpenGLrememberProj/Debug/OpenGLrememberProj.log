@@ -1,15 +1,23 @@
-﻿  Render.cpp
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(182): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(183): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(184): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(190): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(191): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(192): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(333): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1749): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1750): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1751): warning C4838: преобразование из "double" в "GLfloat" требует сужающего преобразования
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1842): warning C4101: angleXY: неиспользованная локальная переменная
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1844): warning C4101: angleYZ: неиспользованная локальная переменная
-s:\github\snowmanboombigsnowman\openglrememberproj\render.cpp(1843): warning C4101: angleXZ: неиспользованная локальная переменная
-  OpenGLrememberProj.vcxproj -> S:\GitHub\snowmanboombigsnowman\Debug\OpenGLrememberProj.exe
+﻿Build started 16.12.2017 13:24:49.
+     1>Project "F:\snowmanboombigsnowman\OpenGLrememberProj\OpenGLrememberProj.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IF:\snowmanboombigsnowman\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/include/ /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Render.cpp
+         Render.cpp
+     1>f:\snowmanboombigsnowman\openglrememberproj\myogl.h(92): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>f:\snowmanboombigsnowman\openglrememberproj\render.cpp(1842): warning C4101: 'angleXY' : unreferenced local variable
+     1>f:\snowmanboombigsnowman\openglrememberproj\render.cpp(1844): warning C4101: 'angleYZ' : unreferenced local variable
+     1>f:\snowmanboombigsnowman\openglrememberproj\render.cpp(1843): warning C4101: 'angleXZ' : unreferenced local variable
+       Link:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\snowmanboombigsnowman\Debug\OpenGLrememberProj.exe" /INCREMENTAL /NOLOGO F:\snowmanboombigsnowman\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/lib/Win32\glew32.lib F:\snowmanboombigsnowman\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/lib/Win32\glfw3dll.lib F:\snowmanboombigsnowman\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/lib/Win32\freeglut.lib opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\snowmanboombigsnowman\Debug\OpenGLrememberProj.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\snowmanboombigsnowman\Debug\OpenGLrememberProj.lib" /MACHINE:X86 Debug\OpenGLrememberProj.res
+         Debug\MyOGL.obj
+         Debug\Object.obj
+         Debug\OpenGLrememberProj.obj
+         Debug\Primitives.obj
+         Debug\PrimitivesStatic.obj
+         Debug\Render.obj
+         OpenGLrememberProj.vcxproj -> F:\snowmanboombigsnowman\Debug\OpenGLrememberProj.exe
+     1>Done Building Project "F:\snowmanboombigsnowman\OpenGLrememberProj\OpenGLrememberProj.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:14.66

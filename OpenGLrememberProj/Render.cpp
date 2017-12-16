@@ -16,8 +16,8 @@
 
 int GORY = 0;
 bool boommax = false;
-bool textureMode = false;
-bool lightMode = false;
+bool textureMode = true;
+bool lightMode = true;
 double xb;
 double yb;
 double zb;
@@ -111,7 +111,7 @@ public:
 	}
 private:
 	double flagExplosion = false;
-	double PointsGrassMass[100][5] = { 0 };
+	double PointsGrassMass[100][5];
 	void derevo(double ugol, double RGB[])
 	{
 		double Po1[] = { 0,0,0 };
@@ -2047,11 +2047,11 @@ void Render(OpenGL *ogl)
 			glBegin(GL_TRIANGLE_FAN);
 			glColor3d(0, 1, 0);
 			glTexCoord2d(256.0 / 512.0, 1 - 256.0 / 512.0);
-			glVertex3d(masgameX[colpol], masgameY[colpol], 0.01);
+			glVertex3d(masgameX[colpol], masgameY[colpol], 0.5 );
 			for (int i = 0; i <= 360; i++)
 			{
 				glTexCoord2d((256.0 - 180.0 * sin(i*M_PI / 180)) / 512.0, 1 - (256.0 + 180.0 * cos(i*M_PI / 180)) / 512.0);
-				glVertex3d(masgameX[colpol] + 2 * sin(i*M_PI / 180), masgameY[colpol] + 2 * cos(i*M_PI / 180), 0.01);
+				glVertex3d(masgameX[colpol] + 2 * sin(i*M_PI / 180), masgameY[colpol] + 2 * cos(i*M_PI / 180), 0.5);
 			}
 			glEnd();
 			for (int i = 0; i <= 360; i++)
